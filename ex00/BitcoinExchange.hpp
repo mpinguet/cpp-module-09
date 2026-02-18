@@ -18,4 +18,5 @@ public:
 	BitcoinExchange &operator=(const BitcoinExchange&);
 	
 	void loadMap();
+	void processInput(std::string filename);
 };

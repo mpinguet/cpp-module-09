@@ -32,11 +32,37 @@ void BitcoinExchange::loadMap()
 		double value = atof(part2.c_str());
 		this->db[part1] = value;
 	}
+}
 
-	std::map<std::string, double>::iterator it = db.find("2022-03-26");
+int parse_date(std::string date)
+{
+	
+}
 
-	if (it == db.end())
-		std::cout << "non existente" << std::endl;
-	else
-		std::cout << it->second << std::endl;
+void BitcoinExchange::processInput(std::string filename)
+{
+	std::ifstream file(filename.c_str());
+
+	std::string line;
+	std::string part1;
+	std::string part2;
+	if (!file)
+	{
+		std::cerr << "Error: could not open file" << std::endl;
+		return ;
+	}
+	getline(file, line);
+	if (line != "date | value")
+		std::cout << "Error: you are not respecting the format 'date | value'." << std::endl;
+	while(getline(file, line))
+	{
+		if (line.find('|') == std::string::npos)
+			std::cout << "Error: bad input => " << line << std::endl;
+		else
+		{
+			part1 = line.substr(0, line.find('|') - 1);
+			part2 = line.substr(line.find('|') + 2);
+		}
+	}
+	return ;
 }

@@ -140,7 +140,6 @@ void BitcoinExchange::processInput(std::string filename)
 			}
 			if (parse_value(part2, line))
 				continue;
-			
 		}
 	}
 	return ;

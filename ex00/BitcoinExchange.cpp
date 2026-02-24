@@ -13,6 +13,13 @@ BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange &bit)
 	return (*this);
 }
 
+double minYear;
+double minMonth;
+double minDay;
+double maxYear;
+double maxMonth;
+double maxDay;
+
 void BitcoinExchange::loadMap()
 {
 	std::string part1;
@@ -34,12 +41,11 @@ void BitcoinExchange::loadMap()
 	}
 }
 
-int toDouble(std::string &str)
+double toDouble(const std::string &str)
 {
 	std::stringstream ss(str);
 	double i;
 	ss >> i;
-
 	return (i);
 }
 
@@ -58,12 +64,15 @@ int parse_date(std::string date)
 	month = date.substr(date.find('-') + 1, date.find('-') - 2);
 	day = date.substr(date.find('-') + 4);
 
-	if (toDouble(year) < 2009 || toDouble(year) > 2022)
+	if (toDouble(month) > 12 || toDouble(month) < 1 || toDouble(day) > 31 || toDouble(day) < 1)
 		return (1);
-	if (toDouble(month) < 1 || toDouble(month) > 12)
+	if (toDouble(year) < minYear)
 		return (1);
-	if (toDouble(day) < 1 || toDouble(day) > 31)
+	if (toDouble(year) == minYear && toDouble(month) < minMonth)
 		return (1);
+	if (toDouble(year) == minYear && toDouble(month) == minMonth && toDouble(day) < minDay)
+		return (1);
+	
 
 	return (0);
 }
@@ -110,6 +119,32 @@ int parse_value(std::string value, std::string line)
 	return (0);
 }
 
+void get_max_min_date(std::map<std::string, double > db)
+{
+	std::string date;
+	size_t i = 0;
+	std::map<std::string, double>::iterator it = db.begin();
+
+	if (it != db.end())
+		date = it->first;
+	while(isdigit(date[i]) || date[i] == '-')
+		i++;
+	minYear = toDouble(date.substr(0, date.find('-')));
+	minMonth = toDouble(date.substr(date.find('-') + 1, date.find('-') - 2));
+	minDay = toDouble(date.substr(date.find('-') + 4));
+
+	i = 0;
+	it = db.end();
+	--it;
+	if (it != db.end())
+		date = it->first;
+	while(isdigit(date[i]) || date[i] == '-')
+		i++;
+	maxYear = toDouble(date.substr(0, date.find('-')));
+	maxMonth = toDouble(date.substr(date.find('-') + 1, date.find('-') - 2));
+	maxDay = toDouble(date.substr(date.find('-') + 4));
+	return ;
+}
 void BitcoinExchange::processInput(std::string filename)
 {
 	std::ifstream file(filename.c_str());
@@ -122,6 +157,7 @@ void BitcoinExchange::processInput(std::string filename)
 		std::cerr << "Error: could not open file" << std::endl;
 		return ;
 	}
+	get_max_min_date(this->db);
 	getline(file, line);
 	if (line != "date | value")
 		std::cout << "Error: you are not respecting the format 'date | value'." << std::endl;

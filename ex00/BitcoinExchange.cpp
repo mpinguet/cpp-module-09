@@ -16,9 +16,6 @@ BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange &bit)
 double minYear;
 double minMonth;
 double minDay;
-double maxYear;
-double maxMonth;
-double maxDay;
 
 void BitcoinExchange::loadMap()
 {
@@ -91,9 +88,16 @@ int parse_date(std::string date)
 	std::string year;
 	std::string month;
 	std::string day;
+	int thread = 0;
 
 	while(isdigit(date[i]) || date[i] == '-')
+	{
+		if (date[i] == '-')
+			thread += 1;
 		i++;
+	}
+	if (thread != 3)
+		return (1);
 	if (i != date.size())
 		return (1);
 	year = date.substr(0, date.find('-'));
@@ -177,9 +181,6 @@ void get_max_min_date(std::map<std::string, double > db)
 		date = it->first;
 	while(isdigit(date[i]) || date[i] == '-')
 		i++;
-	maxYear = toDouble(date.substr(0, date.find('-')));
-	maxMonth = toDouble(date.substr(date.find('-') + 1, date.find('-') - 2));
-	maxDay = toDouble(date.substr(date.find('-') + 4));
 	return ;
 }
 
@@ -207,6 +208,38 @@ int lower_bound_and_calcul(const std::map<std::string, double>& db,
 
     return 0;
 }
+
+int wrong_pipe(std::string line)
+{
+	int i = 0;
+	int pipe = 0;
+	while(line[i])
+	{
+		if (line[i] == '|')
+			pipe += 1;
+		if (pipe > 1)
+			return (1);
+		i++;
+	}
+	if (line[i - 1] == '|')
+		return (1);
+	return (0);
+}
+
+int wrong_part(std::string part1, std::string part2)
+{
+	int i = 0;
+	while(isspace(part1[i]) && part1[i])
+		i++;
+	if (!part1[i])
+		return (1);
+	i = 0;
+	while(isspace(part2[i]) && part2[i])
+		i++;
+	if (!part2[i])
+		return (1);
+	return (0);
+}
 void BitcoinExchange::processInput(std::string filename)
 {
 	std::ifstream file(filename.c_str());
@@ -225,12 +258,17 @@ void BitcoinExchange::processInput(std::string filename)
 		std::cout << "Error: you are not respecting the format 'date | value'." << std::endl;
 	while(getline(file, line))
 	{
-		if (line.find('|') == std::string::npos)
+		if (line.find('|') == std::string::npos || wrong_pipe(line))
 			std::cout << "Error: bad input => " << line << std::endl;
 		else
 		{
 			part1 = line.substr(0, line.find('|') - 1);
 			part2 = line.substr(line.find('|') + 2);
+			if (wrong_part(part1, part2))
+			{
+				std::cout << "Error: bad input => " << line << std::endl;
+				continue;
+			}
 			if (parse_date(part1))
 			{
 				std::cout << "Error: bad input => " << line << std::endl;

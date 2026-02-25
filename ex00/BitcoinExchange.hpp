@@ -9,9 +9,6 @@
 #include <sstream>
 
 
-extern double maxYear;
-extern double maxMonth;
-extern double maxDay;
 extern double minYear;
 extern double minMonth;
 extern double minDay;

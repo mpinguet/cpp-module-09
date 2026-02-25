@@ -49,6 +49,42 @@ double toDouble(const std::string &str)
 	return (i);
 }
 
+int toInt(const std::string &str)
+{
+	std::stringstream ss(str);
+	int i;
+	ss >> i;
+	return (i);
+}
+
+
+int parse_month(int year, int month, int day)
+{
+	if (month % 2 == 0)
+	{
+		if (month == 2)
+		{
+			if ((( year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)))
+			{
+				if (day > 29)
+					return (1);
+			}
+			else
+			{
+				if (day > 28)
+					return (1);
+			}
+		}
+		else
+		{
+			if (day > 30)
+				return (1);
+		}
+	}
+
+	return (0);
+}
+
 int parse_date(std::string date)
 {
 	size_t i = 0;
@@ -63,7 +99,8 @@ int parse_date(std::string date)
 	year = date.substr(0, date.find('-'));
 	month = date.substr(date.find('-') + 1, date.find('-') - 2);
 	day = date.substr(date.find('-') + 4);
-
+	if (toInt(year) > 2100)
+		return (1);
 	if (toDouble(month) > 12 || toDouble(month) < 1 || toDouble(day) > 31 || toDouble(day) < 1)
 		return (1);
 	if (toDouble(year) < minYear)
@@ -72,8 +109,8 @@ int parse_date(std::string date)
 		return (1);
 	if (toDouble(year) == minYear && toDouble(month) == minMonth && toDouble(day) < minDay)
 		return (1);
-	
-
+	if (parse_month(toInt(year), toInt(month), toInt(day)))
+		return (1);
 	return (0);
 }
 
@@ -145,6 +182,31 @@ void get_max_min_date(std::map<std::string, double > db)
 	maxDay = toDouble(date.substr(date.find('-') + 4));
 	return ;
 }
+
+int lower_bound_and_calcul(const std::map<std::string, double>& db,
+                           const std::string& date,
+                           const std::string& value)
+{
+    if (db.empty())
+        return 1;
+
+    std::map<std::string, double>::const_iterator it = db.lower_bound(date);
+
+    if (it != db.end() && it->first == date)
+    {
+        std::cout << date << " => " << value << " = " << toDouble(value) * it->second << std::endl;
+        return 0;
+    }
+
+    if (it == db.begin())
+        return 1;
+
+    --it;
+
+    std::cout << date << " => " << value << " = " << toDouble(value) * it->second << std::endl;
+
+    return 0;
+}
 void BitcoinExchange::processInput(std::string filename)
 {
 	std::ifstream file(filename.c_str());
@@ -176,6 +238,7 @@ void BitcoinExchange::processInput(std::string filename)
 			}
 			if (parse_value(part2, line))
 				continue;
+			lower_bound_and_calcul(this->db, part1, part2);
 		}
 	}
 	return ;

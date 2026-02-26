@@ -45,6 +45,7 @@ int parse_date_2(std::string date, std::string value)
 	}
 	if (thread > 1 || i != value.size())
 		return (1);
+	return (0);
 }
 
 int BitcoinExchange::loadMap()
@@ -73,7 +74,7 @@ int BitcoinExchange::loadMap()
 			this->db[part1] = value;
 		}
 	}
-	exit(0);
+
 	return (0);
 }
 
@@ -291,6 +292,8 @@ void BitcoinExchange::processInput(std::string filename)
 		std::cerr << "Error: could not open file" << std::endl;
 		return ;
 	}
+	if (this->db.empty())
+		return ;
 	get_max_min_date(this->db);
 	getline(file, line);
 	if (line != "date | value")

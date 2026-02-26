@@ -17,7 +17,37 @@ double minYear;
 double minMonth;
 double minDay;
 
-void BitcoinExchange::loadMap()
+int parse_date_2(std::string date, std::string value)
+{
+	size_t i = 0;
+	std::string year;
+	std::string month;
+	std::string day;
+	int thread = 0;
+
+	if (date.empty() || value.empty())
+		return (1);
+	while(isdigit(date[i]) || date[i] == '-')
+	{
+		if (date[i] == '-')
+			thread += 1;
+		i++;
+	}
+	if (thread != 2 || i != date.size())
+		return (1);
+	i = 0;
+	thread = 0;
+	while(isdigit(value[i]) || value[i] == '.')
+	{
+		if (value[i] == '.')
+			thread += 1;
+		i++;
+	}
+	if (thread > 1 || i != value.size())
+		return (1);
+}
+
+int BitcoinExchange::loadMap()
 {
 	std::string part1;
 	std::string part2;
@@ -26,16 +56,25 @@ void BitcoinExchange::loadMap()
 	if (!file)
 	{
 		std::cerr << "Error: could not open file" << std::endl;
-		return ;
+		return 1;
 	}
 	getline(file, part1);
-
+	if (part1 != "date,exchange_rate")
+	{
+		std::cout << "Error: you are not respecting the format 'date,exchange_rate'." << std::endl;
+		return (1);
+	}
 	while (getline(file, part1, ','))
 	{
 		getline(file, part2);
-		double value = atof(part2.c_str());
-		this->db[part1] = value;
+		if (!parse_date_2(part1, part2))
+		{
+			double value = atof(part2.c_str());
+			this->db[part1] = value;
+		}
 	}
+	exit(0);
+	return (0);
 }
 
 double toDouble(const std::string &str)
@@ -96,7 +135,7 @@ int parse_date(std::string date)
 			thread += 1;
 		i++;
 	}
-	if (thread != 3)
+	if (thread != 2)
 		return (1);
 	if (i != date.size())
 		return (1);

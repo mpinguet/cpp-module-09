@@ -129,13 +129,18 @@ int parse_date(std::string date)
 	std::string month;
 	std::string day;
 	int thread = 0;
+	int digit = 0;
 
 	while(isdigit(date[i]) || date[i] == '-')
 	{
 		if (date[i] == '-')
 			thread += 1;
+		if (isdigit(date[i]))
+				digit++;
 		i++;
 	}
+	if (digit != 8)
+		return (1);
 	if (thread != 2)
 		return (1);
 	if (i != date.size())

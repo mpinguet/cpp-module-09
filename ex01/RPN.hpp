@@ -9,6 +9,10 @@
 class RPN
 {
 private:
-	std::stack<int> i;
-	
+	std::stack<int> stack;
+public:
+	RPN();
+	~RPN();
+	int parse_RPN(const std::string &);
+	void calcul_rpn(const std::string &);
 };

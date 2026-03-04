@@ -1,7 +1,17 @@
 #include "RPN.hpp"
 
 RPN::RPN() {};
+
 RPN::~RPN() {};
+
+RPN::RPN(const RPN &other): stack(other.stack) {}
+
+RPN &RPN::operator=(const RPN &other)
+{
+	if (this != &other)
+		stack = other.stack;
+	return *this;
+}
 
 int isOperator(int o)
 {

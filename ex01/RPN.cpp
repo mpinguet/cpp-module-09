@@ -69,7 +69,7 @@ int RPN::parse_RPN(const std::string &str)
 	return (0);
 }
 
-void RPN::calcul_rpn(const std::string &str)
+int RPN::calcul_rpn(const std::string &str)
 {
 	int a;
 	int b;
@@ -81,6 +81,8 @@ void RPN::calcul_rpn(const std::string &str)
 		{
 			if (isOperator(str[i]) == 1)
 			{
+				if (stack.size() < 2)
+					return (1);
 				a = stack.top();
 				stack.pop();
 				b = stack.top();
@@ -89,6 +91,8 @@ void RPN::calcul_rpn(const std::string &str)
 			}
 			if (isOperator(str[i]) == 2)
 			{
+				if (stack.size() < 2)
+					return (1);
 				a = stack.top();
 				stack.pop();
 				b = stack.top();
@@ -97,6 +101,8 @@ void RPN::calcul_rpn(const std::string &str)
 			}
 			if (isOperator(str[i]) == 3)
 			{
+				if (stack.size() < 2)
+					return (1);
 				a = stack.top();
 				stack.pop();
 				b = stack.top();
@@ -105,11 +111,13 @@ void RPN::calcul_rpn(const std::string &str)
 			}
 			if (isOperator(str[i]) == 4)
 			{
+				if (stack.size() < 2)
+					return (1);
 				a = stack.top();
 				if (a == 0)
 				{
 					std::cout << "Erreur: infinity" << std::endl;
-					return ;
+					return (0);
 				}
 				stack.pop();
 				b = stack.top();
@@ -119,4 +127,5 @@ void RPN::calcul_rpn(const std::string &str)
 		}
 	}
 	std::cout << stack.top() << std::endl;
+	return (0);
 }

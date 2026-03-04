@@ -17,5 +17,5 @@ public:
 	~RPN();
 
 	int parse_RPN(const std::string &);
-	void calcul_rpn(const std::string &);
+	int calcul_rpn(const std::string &);
 };

@@ -10,5 +10,6 @@ int main(int argc, char **argv)
 	}
 	if (rpn.parse_RPN(std::string (argv[1])))
 		return (0);
-	rpn.calcul_rpn(std::string(argv[1]));
+	if (rpn.calcul_rpn(std::string(argv[1])))
+		std::cerr << "Error" << std::endl;
 }

@@ -49,8 +49,33 @@ int PmergeMe::parse_input(int argc, char **argv)
 			return (1);
 		}
 		vec.push_back(n);
+		deq.push_back(n);
 	}
 	std::string bef = "Before: ";
 	show_vector(bef, vec);
-	return (0);	
+	return (0);
+
+}
+
+void PmergeMe::sortVector()
+{
+	std::vector<int> big;
+	std::vector<int> small;
+	size_t len = vec.size();
+	if (len % 2 != 0)
+		len -= 1;
+	for (size_t i = 0; i < len; i += 2)
+	{
+		if (vec[i] <= vec[i + 1])
+		{
+			small.push_back(vec[i]);
+			big.push_back(vec[i + 1]);
+		}
+		else
+		{
+			small.push_back(vec[i + 1]);
+			big.push_back(vec[i]);
+		}
+	}
+		
 }

@@ -7,6 +7,6 @@ int main(int argc, char **argv)
 		return (0);
 	if (me.parse_input(argc, argv))
 		return (0);
-	me.sortVector();
+	me.main_algo_vec();
 	return (0);
 }

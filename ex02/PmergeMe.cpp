@@ -80,8 +80,9 @@ void seq_jacob(std::vector<int> &jacob, std::vector<int> small)
 {
 	int index;
 
-	jacob.push_back(0);
 	jacob.push_back(1);
+	jacob.push_back(3);
+
 	for (size_t i = 2; i < small.size(); i++)
 	{
 		index = jacob[i - 1] + 2 * jacob[i - 2];
@@ -94,8 +95,13 @@ void seq_jacob(std::vector<int> &jacob, std::vector<int> small)
 void insert_small(std::vector<int> &jacob, std::vector<int> &main_chain, std::vector<int> &small)
 {
 	std::vector<bool> used(small.size(), false);
+	used[0] = true;
 	for (size_t i = 0; i < jacob.size(); i++)
 	{
+		if (jacob[i] > (int)small.size() - 1)
+			break;
+		if (used[jacob[i]] == true)
+			continue;
 		std::vector<int>::iterator it = std::lower_bound(main_chain.begin(), main_chain.end(), small[jacob[i]]);
 		main_chain.insert(it, small[jacob[i]]);
 		used[jacob[i]] = true;
@@ -140,6 +146,7 @@ void PmergeMe::sortVector(std::vector<int> &vec)
 	sortVector(big);
 
 	std::vector<int> main_chain = big;
+	main_chain.insert(main_chain.begin(), small[0]);
 	std::vector<int> jacob;
 	seq_jacob(jacob, small);
 	insert_small(jacob, main_chain, small);
@@ -152,10 +159,12 @@ void PmergeMe::sortVector(std::vector<int> &vec)
 }
 void PmergeMe::main_algo_vec()
 {
+	clock_t start = clock();
 	sortVector(vec);
-	for (size_t i = 0; i < vec.size(); i++)
-	{
-		std::cout << "vec [" << i << "] = " << vec[i] << std::endl;
-	}
-	
+	clock_t end = clock();
+	double time = (double)(end - start) / CLOCKS_PER_SEC;
+	std::string aft = "After: ";
+	show_vector(aft, vec);
+	std::cout << std::fixed << std::setprecision(6) << "Time to process a range of " << vec.size() << " elements with std::vector : " <<
+	time << " us"<< std::endl;	
 }

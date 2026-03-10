@@ -23,5 +23,7 @@ public:
 	PmergeMe &operator=(const PmergeMe &);
     int parse_input(int argc, char **argv);
 	void main_algo_vec();
-	void sortVector(std::vector<int> &vec);
+	void sortVector(std::vector<int> &);
+	void main_algo_deq();
+	void sortDeq(std::deque<int> &);
 };

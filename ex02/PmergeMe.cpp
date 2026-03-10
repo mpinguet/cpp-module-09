@@ -168,3 +168,94 @@ void PmergeMe::main_algo_vec()
 	std::cout << std::fixed << std::setprecision(6) << "Time to process a range of " << vec.size() << " elements with std::vector : " <<
 	time << " us"<< std::endl;	
 }
+
+void seq_jacob_deq(std::deque<int> &jacob, std::deque<int> small)
+{
+	int index;
+
+	jacob.push_back(1);
+	jacob.push_back(3);
+
+	for (size_t i = 2; i < small.size(); i++)
+	{
+		index = jacob[i - 1] + 2 * jacob[i - 2];
+		if (index >= (int)small.size())
+			break;
+		jacob.push_back(index);
+	}
+}
+
+void insert_small_deq(std::deque<int> &jacob, std::deque<int> &main_chain, std::deque<int> &small)
+{
+	std::deque<bool> used(small.size(), false);
+	used[0] = true;
+	for (size_t i = 0; i < jacob.size(); i++)
+	{
+		if (jacob[i] > (int)small.size() - 1)
+			break;
+		if (used[jacob[i]] == true)
+			continue;
+		std::deque<int>::iterator it = std::lower_bound(main_chain.begin(), main_chain.end(), small[jacob[i]]);
+		main_chain.insert(it, small[jacob[i]]);
+		used[jacob[i]] = true;
+	}
+
+	for (int i = small.size() - 1; i >= 0; i--)
+	{
+		if (used[i] == true)
+			continue;
+		else
+		{
+			std::deque<int>::iterator it = std::lower_bound(main_chain.begin(), main_chain.end(), small[i]);
+			main_chain.insert(it, small[i]);
+		}
+	}
+}
+
+void PmergeMe::sortDeq(std::deque<int> &deq)
+{
+	std::deque<int> big;
+	std::deque<int> small;
+	size_t len = deq.size();
+	
+	if (deq.size() <= 1)
+		return;
+	if (len % 2 != 0)
+		len -= 1;
+	for (size_t i = 0; i < len; i += 2)
+	{
+		if (deq[i] <= deq[i + 1])
+		{
+			small.push_back(deq[i]);
+			big.push_back(deq[i + 1]);
+		}
+		else
+		{
+			small.push_back(deq[i + 1]);
+			big.push_back(deq[i]);
+		}
+	}
+
+	sortDeq(big);
+
+	std::deque<int> main_chain = big;
+	main_chain.insert(main_chain.begin(), small[0]);
+	std::deque<int> jacob;
+	seq_jacob_deq(jacob, small);
+	insert_small_deq(jacob, main_chain, small);
+	if (len != deq.size())
+	{
+		std::deque<int>::iterator it = std::lower_bound(main_chain.begin(), main_chain.end(), deq[deq.size() - 1]);
+		main_chain.insert(it, deq[deq.size() - 1]);
+	}
+	deq = main_chain;
+}
+void PmergeMe::main_algo_deq()
+{
+	clock_t start = clock();
+	sortDeq(deq);
+	clock_t end = clock();
+	double time = (double)(end - start) / CLOCKS_PER_SEC;
+	std::cout << std::fixed << std::setprecision(6) << "Time to process a range of " << deq.size() << " elements with std::deque : " <<
+	time << " us"<< std::endl;	
+}

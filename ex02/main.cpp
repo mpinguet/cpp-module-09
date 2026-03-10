@@ -8,5 +8,6 @@ int main(int argc, char **argv)
 	if (me.parse_input(argc, argv))
 		return (0);
 	me.main_algo_vec();
+	me.main_algo_deq();
 	return (0);
 }
